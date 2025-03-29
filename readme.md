@@ -1,4 +1,4 @@
-# CyberDirector 2006
+# the underweb
 
 A nostalgic digital directory with a 2006-era Web 2.0 aesthetic that celebrates the lost worlds of early internet surfing.
 
@@ -6,7 +6,7 @@ A nostalgic digital directory with a 2006-era Web 2.0 aesthetic that celebrates 
 
 ## Overview
 
-CyberDirector 2006 is a modern recreation of early Web 2.0 directories and search engines, inspired by classics like Peelopaalu and Wiby. This project features a comprehensive digital directory with user submissions, a rotating 88x31 button widget, and a terminal-style search engine.
+the underweb is a modern recreation of early Web 2.0 directories and search engines, inspired by classics like Peelopaalu and Wiby. This project features a comprehensive digital directory with user submissions, a rotating 88x31 button widget, and a terminal-style search engine.
 
 ## Features
 
