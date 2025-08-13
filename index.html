@@ -88,8 +88,10 @@
                 initializeButtonRotator();
                 initializeSearchEngine();
                 initializeVisitorCounter();
-                setupEventListeners();
                 
+                // Initialize the SiteSubmissionHandler
+                new SiteSubmissionHandler();
+
                 // Maybe show a popup ad
                 setTimeout(showRandomPopupAd, 30000);
             }, 3000);
@@ -245,37 +247,6 @@
             counter.textContent = visits.toString();
         }
 
-        // Handle form submission
-        function setupEventListeners() {
-            const submitForm = document.getElementById("submit-form");
-            submitForm.addEventListener("submit", function(e) {
-                e.preventDefault();
-                
-                // Validate the form
-                const url = document.getElementById("site-url").value;
-                const name = document.getElementById("site-name").value;
-                const desc = document.getElementById("site-desc").value;
-                
-                if (!url || !name || !desc) {
-                    playErrorSound();
-                    alert("Please fill in all required fields!");
-                    return;
-                }
-                
-                // Show success message
-                alert("Thanks for your submission! Your site will be reviewed and added to the directory soon!");
-                submitForm.reset();
-            });
-            
-            // "Surprise Me" button
-            const surpriseButton = document.getElementById("surprise-me");
-            if (surpriseButton) {
-                surpriseButton.addEventListener("click", function() {
-                    const randomIndex = Math.floor(Math.random() * directoryData.length);
-                    window.open(directoryData[randomIndex].url, '_blank');
-                });
-            }
-        }
 
         // Play the classic Windows XP error sound
         function playErrorSound() {

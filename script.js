@@ -1,34 +1,8 @@
 // CyberDirector 2006 - Main JavaScript Functions
 // This would be linked in the HTML file and contains all functionality
 
-// Sample data structure for site entries in the directory
-const directoryData = [
-    {
-        id: 1,
-        name: "RetroPixel",
-        url: "http://example.com/retropixel",
-        description: "Classic pixel art resources and tutorials from the early web",
-        category: "art",
-        buttonUrl: "button1.gif"
-    },
-    {
-        id: 2,
-        name: "NetSurfer Heaven",
-        url: "http://example.com/netsurfer",
-        description: "Early web surfing techniques and hidden gems of the internet",
-        category: "web",
-        buttonUrl: "button2.gif"
-    },
-    {
-        id: 3,
-        name: "GeoCities Archive",
-        url: "http://example.com/geocities",
-        description: "Remember the old days of web neighborhoods?",
-        category: "nostalgia",
-        buttonUrl: "button3.gif"
-    },
-    // Add more entries as needed
-];
+// Directory data will be loaded from backend
+let directoryData = [];
 
 // Categories for the directory
 const categories = [
@@ -41,10 +15,20 @@ const categories = [
 ];
 
 // Initialize when document is loaded
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", async function() {
     // Show loading screen
     showLoadingScreen();
-    
+    // Fetch directory data from backend
+    try {
+        const response = await fetch('https://<your-neon-project>.neon.tech/rest/v1/rpc/sites_get');
+        if (response.ok) {
+            directoryData = await response.json();
+        } else {
+            directoryData = [];
+        }
+    } catch (err) {
+        directoryData = [];
+    }
     // Initialize components after "loading"
     setTimeout(function() {
         hideLoadingScreen();
@@ -53,7 +37,6 @@ document.addEventListener("DOMContentLoaded", function() {
         initializeSearchEngine();
         initializeVisitorCounter();
         setupEventListeners();
-        
         // Maybe show a popup ad
         setTimeout(showRandomPopupAd, 30000);
     }, 3000);

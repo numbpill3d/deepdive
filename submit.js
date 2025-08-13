@@ -66,8 +66,13 @@ class SiteSubmissionHandler {
     
     // Check required fields
     if (!url) {
-      errorMessage += 'Website URL is required.\n';
-      isValid = false;
+        // Save submission asynchronously
+        this.saveSubmission(submission).then(() => {
+          // Show success message
+          this.showSuccessMessage();
+          // Reset form
+          this.form.reset();
+        });
     } else if (!url.match(/^https?:\/\/.+/)) {
       errorMessage += 'Website URL must start with http:// or https://.\n';
       isValid = false;
@@ -112,23 +117,29 @@ class SiteSubmissionHandler {
       // Save to local storage
       localStorage.setItem(this.localStorageKey, JSON.stringify(existingSubmissions));
       
-      return true;
-    } catch (error) {
-      console.error('Error saving submission:', error);
-      return false;
-    }
-  }
-  
-  // Get existing submissions from local storage
-  getSubmissions() {
-    try {
-      const submissions = localStorage.getItem(this.localStorageKey);
-      return submissions ? JSON.parse(submissions) : [];
-    } catch (error) {
-      console.error('Error getting submissions:', error);
-      return [];
-    }
-  }
+      async saveSubmission(submission) {
+        try {
+          const response = await fetch('https://<your-neon-project>.neon.tech/rest/v1/rpc/sites_post', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              p_url: submission.url,
+              p_title: submission.name,
+              p_description: submission.description
+            })
+          });
+          if (!response.ok) {
+            throw new Error('Failed to submit site');
+          }
+          return true;
+        } catch (error) {
+          console.error('Error saving submission:', error);
+          alert('Submission failed. Please try again later.');
+          return false;
+        }
+      }
   
   // Show success message
   showSuccessMessage() {
@@ -163,19 +174,11 @@ class SiteSubmissionHandler {
     const body = document.createElement('div');
     body.style.padding = '10px';
     body.style.fontSize = '12px';
-    P+uAP+kAP+vAP+wAP+rAP+yAP+zAP+0AP+1AP+2AP+3AP+4AP+xAP+5AP+6AP+8AP+9AP++AP+7AP+/AP/AAP/BAP/CAP/DAP/EAP/FAP/GAP/HAP/IAP/JAP/KAP/LAP/MAP/NAP/OAP/PAP/QAP/RAP/SAP/TAP/UAP/VAP/WAP/XAP/YAP/ZAP/bAP/cAP/aAP/dAP/eAP/fAP/gAP/hAP/iAP/jAP/kAP/lAP/mAP/nAP/pAP/qAP/oAP/rAP/tAP/uAP/sAP/vAP/wAP/xAP/yAP/zAP/0AP/1AP/2AP/3AP/4AP/5AP/7AP/8AP/6AP/9AP/+AP//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwAAAAAIAAgAAAI/wABCBxIsKDBgwgTKlzIsKHDhxAjSpxIsaJFhNYeUdS48aHGixkzlgDwYAAHJzgSOAFgcQCDkgMnKHhCsqSAJxeekBTJoQNMhwsKUNjQgcMEnyA3yHw0QYIHmzVzpiA64MEUKRKkTJEyJQqTJjt2COVQhcIUKleuaMGiRcsVLVmaYO3aJewTCmbNakG7JYsWLlrSptWiBcsVJF++WEVLRckRHFiSVKhQRIIECTx4iFXLlk2XmDKdkBkjZswYMmXMnKFyVIcOHGfYtTuD7h07duvMkRs3Ll06cdo8lfqEiZOoUJ5CefLkiZOnTHg2cfrkCdSePqJAhRpFqvQnUP9BQ40aRar1ptSnPqFKdeq1qlWuNHHy9ImUrE9NlixZwqS6kyXYsd/XbqSJlCjtuTcFFFKEYcZ+Z6SBRhtwiPGGGWXEkcZ+bKhRRhpspLFGG3KwUUYaebRRRx557LFHHX7okYcff+zhByB/BCKIIIQUUoghiCSimCB3VXYXXnntxddfjukFnmd9BSaYYoYNZhhffBG2F2KFJUbZZJFN1ldfgxWmpF6EXdaXZnddltlheG12WV+e7fVZZn1x5tlnfYU2GmmceaZXZqOhZhovmZn2WGaZiaalX3P+xdllp5WGWmqqscYaa7DB1lpqsG1G22yu0VYbbbfhlltuveVG3G/38fabbcANJ9xxySV33G7JLbdcc81FR52O1lXnXXbaZceddd9xJ96N1pVHXnnleUdeeuqJ5956N5KH3o3snZfefjfGJ+N89s1434z78dcffgH2599//QU44IEEHohggQguyN+CDD4YYYQTVnghhBluyGGHG3r4YYYhbljiiB+WmOKJKa7YYosvxjhjjDPWWOONOa6YY449/hhkkEMWmeSRSS7Z5JNRTlnllVlu2eWXYY5Z5plDAgEAOw==" width="32" height="32">
-        </div>
-        <div>
-          <p><b>Thank you for your submission!</b></p>
-          <p>Your site will be reviewed and added to the directory soon.</p>
-        </div>
-      </div>
-      <div style="display: flex; margin-bottom: 10px;">
-        <div style="margin-right: 10px;">
-          <img src="data:image/gif;base64,R0lGODlhIAAgAPcAMf/////3//+lCv+cAP/GU//Wc/+tIf+zM//Lif/z5v+UAP/hxf/59P/y5v/+/f+YAP/9+v+eBv/Tmv+ZAP/kzf/o0v/BQP/69f/frv+gBv+aAP/9+//u3P+bAP/04//47/+iAP/26P/z5//68v/+/P/Be//68//Hk//79v/9+f/w4P/47v/v4f/05P/huP/15//37f/w3//VoP/YpP/Pkv/epP/gsv/cp//Wnv/Ypv/Tnf/o1//q2P/BjP+5Wf/NmP/Kkv/Ii//v2//sz//Vn//AgP/y3v/Qkf/qzv/36//dmP/cmP/68P/Zqf/lvf/y4v/15v/z6f/ryv+9fP+WAP/58f+UAf+XBP+YAf/BVP+3TP+1Sf+/Yv+6Rv+wDv/x1//47f+UB//pxP/s2P+SBP+ZCf+lNP/x3f+aBP+iDf+dE/+eB/+bBP+tAP+nAP+pAP+mAP+oAP+jAP+qAP+sAP+uAP+kAP+vAP+wAP+rAP+yAP+zAP+0AP+1AP+2AP+3AP+4AP+xAP+5AP+6AP+8AP+9AP++AP+7AP+/AP/AAP/BAP/CAP/DAP/EAP/FAP/GAP/HAP/IAP/JAP/KAP/LAP/MAP/NAP/OAP/PAP/QAP/RAP/SAP/TAP/UAP/VAP/WAP/XAP/YAP/ZAP/bAP/cAP/aAP/dAP/eAP/fAP/gAP/hAP/iAP/jAP/kAP/lAP/mAP/nAP/pAP/qAP/oAP/rAP/tAP/uAP/sAP/vAP/wAP/xAP/yAP/zAP/0AP/1AP/2AP/3AP/4AP/5AP/7AP/8AP/6AP/9AP/+AP//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwAAAAAIAAgAAAI/wABCBxIsKDBgwgTKlzIsKHDhxAjSpxIsaJFhNYeUdS48aHGixkzlgDwYAAHJzgSOAFgcQCDkgMnKHhCsqSAJxeekBTJoQNMhwsKUNjQgcMEnyA3yHw0QYIHmzVzpiA64MEUKRKkTJEyJQqTJjt2COVQhcIUKleuaMGiRcsVLVmaYO3aJewTCmbNakG7JYsWLlrSptWiBcsVJF++WEVLRckRHFiSVKhQRIIECTx4iFXLlk2XmDKdkBkjZswYMmXMnKFyVIcOHGfYtTuD7h07duvMkRs3Ll26cdo8lfqEiZOoUJ5CefLkiZOnTHg2cfrkCdSePqJAhRpFqvQnUP9BQ40aRar1ptSnPqFKdeq1qlWuNHHy9ImUrE9NlixZwqS6kyXYsd/XbqSJlCjtuTcFFFKEYcZ+Z6SBRhtwiPGGGWXEkcZ+bKhRRhpspLFGG3KwUUYaebRRRx557LFHHX7okYcff+zhByB/BCKIIIQUUoghiCSimCB3VXYXXnntxddfjukFnmd9BSaYYoYNZhhffBG2F2KFJUbZZJFN1ldfgxWmpF6EXdaXZnddltlheG12WV+e7fVZZn1x5tlnfYU2GmmceaZXZqOhZhovmZn2WGaZiaalX3P+xdllp5WGWmqqscYaa7DB1lpqsG1G22yu0VYbbbfhlltuveVG3G/38fabbcANJ9xxySV33G7JLbdcc81FR52O1lXnXXbaZceddd9xJ96N1pVHXnnleUdeeuqJ5956N5KH3o3snZfefjfGJ+N89s1434z78dcffgH2559//QU44IEEHohggQguyN+CDD4YYYQTVnghhBluyGGHG3r4YYYhbljiiB+WmOKJKa7YYosvxjhjjDPWWOONOa6YY449/hhkkEMWmeSRSS7Z5JNRTlnllVlu2eWXYY5Z5plDAgEAOw==" width="32" height="32">
-        </div>
-        <div>
-          <p><b>Thank you for your submission!</b></p>
-          <p>Your site will be reviewed and added to the directory soon.</p>
-        </div>
-      </div>
+    body.innerHTML = `
+      <p><b>Thank you for your submission!</b></p>
+      <p>Your site will be reviewed and added to the directory soon.</p>
+    `;
+    successBox.appendChild(header);
+    successBox.appendChild(body);
+    document.body.appendChild(successBox);
+  }
